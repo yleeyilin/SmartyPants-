@@ -2,23 +2,9 @@ import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from toolkit import pdf_to_txt
+from toolkit import pdf_to_txt, split
 from langchain.chains.question_answering import load_qa_chain
-from langchain.vectorstores import FAISS
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
 
-def split(llm, query, documents):
-    embeddings = OpenAIEmbeddings()
-    text_splitter = CharacterTextSplitter(        
-        separator="\n",
-        chunk_size=1000,
-        chunk_overlap=0,
-    )
-    splitDocs = text_splitter.split_documents(documents)
-    db = FAISS.from_documents(splitDocs, embeddings)
-    return db.similarity_search(query)
-    
 def insights(llm):
     chain = load_qa_chain(llm, chain_type="stuff")
     uploaded_file = st.file_uploader('Upload PDF file', type='pdf')
