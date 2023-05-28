@@ -17,6 +17,33 @@ def get_answers(llm):
     )
     return LLMChain(llm=llm, prompt=question_template, verbose=True, output_key='question')
 
+def answers(llm):
+    question_list = get_answers(llm)
+
+    st.title("Generate Answers")
+    st.subheader("Upload Question Paper")
+
+    file = st.file_uploader("Upload PDF file", type="pdf")
+
+    if file is not None:
+        with st.spinner("Generating answers..."):
+            txt_file = pdf_to_txt(file)
+            if txt_file is not None:
+                questions = txt_file.split("\n")
+
+                for i, question in enumerate(questions):
+                    st.write(f"Question {i+1}: {question}")
+                    answer = question_list.run(question)
+                    st.write(f"Answer {i+1}: {answer}\n")
+
+"""""
+def get_answers(llm):
+    question_template = PromptTemplate(
+        input_variables=['question'],
+        template='Give me the answer for this question: {question}'
+    )
+    return LLMChain(llm=llm, prompt=question_template, verbose=True, output_key='question')
+
 
 def answers(llm):
     txt_docs = None
@@ -43,3 +70,4 @@ def answers(llm):
             st.write(answer)
             # result += "question: " + question + "\n" + "answer: " + answer + "\n"
         # st.write(result)
+        """
