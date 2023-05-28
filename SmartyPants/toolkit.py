@@ -1,31 +1,29 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import storage
-from firebase_admin import firestore
 import PyPDF2
+import os
+from langchain.document_loaders import TextLoader
 
-cred = credentials.Certificate("/Users/leeyilin/LifeHack-2023/SmartyPants/firebaseKey.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+db_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db'
+# Convert pdf file to txt file for easier processing
+def pdf_to_txt(pdf):
+    pdf_filename = pdf.name  
+    txt_filename = pdf_filename + '.txt'
+    txt_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db/' + txt_filename
 
-# Uploads pdf file directly
-def upload_pdf_to_firestore(file):
-    pdf_bytes = file.read()
-    doc_ref = db.collection("pdfs").document()
-    doc_ref.set({
-        "pdf_bytes": pdf_bytes
-    })
+    with open(os.path.join(db_path, pdf_filename), 'wb') as pdf_file:
+        pdf_file.write(pdf.read())
 
-# Parse in pdf and returns txt 
-def pdf_to_txt(pdf_file):
-    pdf_reader = PyPDF2.PdfFileReader(pdf_file)
-    txt_content = ""
-    for page_num in range(pdf_reader.numPages):
-        currPage = pdf_reader.getPage(page_num)
-        page_content = currPage.extractText()
-        txt_content += page_content
-    doc_ref = db.collection("pdfs").document()
-    doc_ref.set({
-        "pdf_text": txt_content
-    })
-    return txt_content
+    with open(os.path.join(db_path, pdf_filename), 'rb') as pdf_file:
+        reader = PyPDF2.PdfReader(pdf_file)
+        text = ""
+        for page_num in range(len(reader.pages)):
+            page = reader.pages[page_num]
+            text += page.extract_text()
+
+    with open(txt_path, 'w', encoding='utf-8') as txt_file:
+        txt_file.write(text)
+    loader = TextLoader(txt_path)
+    documents = loader.load()
+    return documents
+
+
+# Extract questions from txt file and returns a list of questions 
