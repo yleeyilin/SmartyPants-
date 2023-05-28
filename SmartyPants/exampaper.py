@@ -1,63 +1,34 @@
 import streamlit as st
-import pdfplumber
-import openai
+from toolkit import pdf_to_txt, split
+from langchain.chains.question_answering import load_qa_chain
 
-# Function to identify the question format
-def identify_question_format(question_text):
-    # Add your logic to identify the question format
-    # You can use regular expressions, keyword matching, or any other method
+# Prompt Template
 
-    # For demonstration purposes, let's assume all questions are multiple-choice
-    return 'multiple_choice'
+first_prompt = """ You are an esteemed teacher and a question setter. Given the file, for each question, identify the topic and type of question. 
+The type of questions are as follows:
+1. Multiple Choice Questions (MCQs):
+   a. Include MCQs with options.
+   b. Ensure a balanced distribution of difficulty levels.
 
-def generate_similar_question(question):
-    # Use OpenAI language model to generate a similar question based on the input question
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=question,
-        max_tokens=100,
-        n=1,  # Generate a single similar question
-        stop=None,
-        temperature=0.7
-    )
+2. Short Answer Questions:
+   a. Provide short answer questions covering different topics.
+   b. Each question should require a concise answer within {word limit} words.
 
-    similar_question = response['choices'][0]['text']
-    return similar_question
+3. Essay Questions:
+   a. Include essay questions that require in-depth explanations.
+   b. Each question should cover a specific aspect of the course material.
 
-def generate_exam_paper(uploaded_file):
-    with pdfplumber.open(uploaded_file) as pdf:
-        # Extract text from each page
-        exam_text = ""
-        for page in pdf.pages:
-            exam_text += page.extract_text()
+4. Problem-solving Questions:
+   a. Design problem-solving questions that test application skills.
+   b. Ensure a mix of theoretical and practical scenarios.
 
-        # Split the exam text into individual questions (assuming each question ends with a question mark)
-        questions = exam_text.split('?')
+The topics are the central theme of the question. 
 
-        generated_questions = []
-        for question in questions:
-            # Identify the question format
-            question_format = identify_question_format(question)
-
-            # Generate a similar question
-            similar_question = generate_similar_question(question)
-
-            # Append the similar question to the generated questions list
-            generated_questions.append(similar_question)
-
-    return generated_questions
+Present the breakdown in the following manner: [(Question 1 topic, Question 1 type), (Question 2 topic, Question 2 type),...]
+"""
 
 def exampapers(llm):
-    st.title("Exam Paper Generator")
-
-    # File uploader
+    chain = load_qa_chain(llm, chain_type="stuff")
     uploaded_file = st.file_uploader("Upload Exam PDF file", type="pdf")
-
     if uploaded_file is not None:
-        # Generate the exam paper
-        generated_questions = generate_exam_paper(uploaded_file)
-
-        # Display the generated exam paper
-        st.write("Generated Exam Paper:")
-        for question in generated_questions:
-            st.write(question)
+        

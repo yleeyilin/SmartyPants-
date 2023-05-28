@@ -1,6 +1,9 @@
 import PyPDF2
 import os
 from langchain.document_loaders import TextLoader
+from langchain.vectorstores import FAISS
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
 
 db_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db'
 # Convert pdf file to txt file for easier processing
@@ -25,5 +28,13 @@ def pdf_to_txt(pdf):
     documents = loader.load()
     return documents
 
-
-# Extract questions from txt file and returns a list of questions 
+def split(query, documents):
+    embeddings = OpenAIEmbeddings()
+    text_splitter = CharacterTextSplitter(        
+        separator="\n",
+        chunk_size=1000,
+        chunk_overlap=0,
+    )
+    splitDocs = text_splitter.split_documents(documents)
+    db = FAISS.from_documents(splitDocs, embeddings)
+    return db.similarity_search(query)
