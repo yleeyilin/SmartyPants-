@@ -1,1 +1,1 @@
-apikey = 'generate new token'
+apikey = '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'
