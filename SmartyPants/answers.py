@@ -1,8 +1,10 @@
 import streamlit as st
-from toolkit import upload_pdf_to_firestore
+import toolkit
 
 def answers(llm):
+    txt_docs = None
     file = st.file_uploader('Upload Question Paper', type='pdf')
     if file is not None:
-        upload_pdf_to_firestore(file)
+        toolkit.upload_pdf_to_firestore(file)
+        txt_docs = toolkit.pdf_to_txt(file)
     
