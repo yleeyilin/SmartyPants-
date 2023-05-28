@@ -6,7 +6,6 @@ from answers import answers
 from exampaper import exampapers
 from insights import insights
 
-
 documents = None
 
 # Instantiate environment 
