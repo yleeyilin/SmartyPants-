@@ -1,0 +1,8 @@
+Packages: 
+- Streamlit
+- LangChain
+- PyPDF2
+- os
+- OpenAI
+- networkx 
+- matplotlib
