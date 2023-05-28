@@ -1,11 +1,11 @@
 import streamlit as st
 import toolkit
-from langchain.prompts import PromptTemplate
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.chains import LLMChain
+
+from toolkit import pdf_to_txt
+from langchain.chains.question_answering import load_qa_chain
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.chains import RetrievalQA
+from langchain.embeddings import OpenAIEmbeddings
 
 # Prompt Templates 
 get_question_list = "List all explicitly written questions in the file with a :: between each question"
