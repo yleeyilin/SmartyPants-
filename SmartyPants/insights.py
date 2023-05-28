@@ -35,10 +35,10 @@ def insights(llm):
                 deets = chain.run(input_documents=split(llm, "Thesis", txt_file), question="Identify 5 subtopics and split them by a ,") 
                 details = deets.split(',')
                 for detail in details:
-                    mind_map.add_node(detail, font_color='black', node_size=500)  # Customize subtopic node appearance
-                    mind_map.add_edge(main, detail, color='gray', width=1.0)  # Customize edge appearance
-                plt.figure(figsize=(10, 8))  # Adjust the figure size for better visibility
-                pos = nx.spring_layout(mind_map)  # Use a spring layout for improved node placement
+                    mind_map.add_node(detail, font_color='black', node_size=500)  
+                    mind_map.add_edge(main, detail, color='gray', width=1.0)  
+                plt.figure(figsize=(10, 8)) 
+                pos = nx.spring_layout(mind_map)  
                 nx.draw_networkx(mind_map, pos, with_labels=True, node_color='lightblue', font_weight='bold')
                 plt.axis('off')
                 st.pyplot(plt)
