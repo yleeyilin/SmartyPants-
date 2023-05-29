@@ -17,4 +17,8 @@
 ### 6. Substitute with your own API token 
 - Go to `apikey.py` and substitute your API Token 
 ### 7. Launch the app
-- In terminal, run `streamlit run main.py`
+- In terminal, 
+```
+cd SmartyPants/
+streamlit run main.py
+```
