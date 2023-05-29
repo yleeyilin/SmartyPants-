@@ -3,6 +3,8 @@
 
 ## What is Smarty Pants? 
 
+SmartyPants is driven by a shared motivation - to level the playing field in education. We recognize the significant disparity caused by the booming tuition industry, where those from affluent backgrounds are able to afford specialised supplementary classes. This creates a glaring inequality in access to quality education. To address this issue head-on, we are committed to providing tailored and affordable resources to students. Our mission is to empower every individual with the tools they need to unlock their full potential, ensuring equal opportunities for all.
+
 ## How to use 
 ### 1. Download all packages needed. 
 - Refer to `References.txt`
