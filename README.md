@@ -11,7 +11,7 @@ Leveraging the LangChain framework and employing prompt engineering techniques, 
 
 Our first standout feature is the ability to use our GUI to gain answers immediately. Our app is the ultimate one-stop shop for all your queries, offering a seamless and efficient experience.
 
-That's not all! Imagine effortlessly generating unique exam papers tailored to your needs. SmartyPants is able to take any worksheets or exam papers and professionally transform them into a professionally formatted, downloadable exam paper.
+That's not all! Imagine effortlessly generating unique exam papers tailored to your needs. SmartyPants is able to take any worksheets or exam papers and professionally transform them into a downloadable exam paper.
 
 But that's just the beginning. Our app goes above and beyond by providing invaluable insights that revolutionize the way you comprehend information. Through the power of Natural Language Processing (NLP), our app generates concise summaries of any uploaded PDF document, making comprehension effortless. 
 
