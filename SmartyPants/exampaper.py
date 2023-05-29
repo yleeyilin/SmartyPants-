@@ -1,18 +1,19 @@
 import streamlit as st
-from toolkit import pdf_to_txt, split, prompt, generate_pdf
+from toolkit import pdf_to_txt, split, prompt, generate_pdf, convert_to_pdf
 from langchain import LLMChain
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
 from langchain.output_parsers import CommaSeparatedListOutputParser
 
 warning = """
-his app generates exam papers with questions and answers, powered by GPT-3. You can download the questions as a PDF file. 
+This app generates exam papers with questions and answers, powered by GPT-3. You can download the questions as a PDF file. 
 However, please note that the accuracy of the generated questions may vary depending on the topic. 
 It is recommended to verify the information by searching online or consulting an expert.
 
 Please keep in mind that this app is for educational purposes only. 
 It is designed to help students practice and test their knowledge, and it is not intended for creating exam papers in real-world scenarios.
 """
+
 def generate_html(exam_data):
     html = "<html><body>"
     html += "<h1>MCQ Exam Paper</h1>"
@@ -32,7 +33,7 @@ def exampapers(llm):
         st.markdown(warning)
         txt_file = pdf_to_txt(uploaded_file)
         if txt_file is not None:
-            tpz = chain.run(input_documents=split(llm, "Key Topics", txt_file), question="What are the main topics here? Separate each topic with a ,")
+            tpz = chain.run(input_documents=split("Key Topics", txt_file), question="What are the main topics here? Separate each topic with a ,")
             topics = tpz.split(",")
             numQuestions = st.number_input(
                 "Number of questions",
@@ -48,15 +49,12 @@ def exampapers(llm):
                     template = PromptTemplate(template=promptt, input_variables=[], output_parser=output_parser)
                     llm_chain = LLMChain(prompt=template, llm=llm)
                     res = llm_chain.predict_and_parse()
-                    # Generate HTML content here
-                    html_content = generate_html(res)
-                    # Generate PDF file
-                    output_file = "exam_paper.pdf"
-                    if generate_pdf(html_content, output_file):
+                    print(res)
+                    pdf_bytes = convert_to_pdf(res)
+                    if pdf_bytes:
                         st.success("Questions generated successfully!")
-                        st.download_button("Download Exam Paper", output_file, "Click here to download the exam paper")
+                        st.download_button("Download Exam Paper", data=pdf_bytes, file_name="exam_paper.pdf", mime="application/pdf")
                     else:
                         st.error("Error occurred during PDF generation. Please try again.")
-
                 except Exception as e:
                     st.error("Error occurred during question generation. Please try again.")

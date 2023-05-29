@@ -1,7 +1,7 @@
 import PyPDF2
 import pdfkit
 import os
-import subprocess
+import fpdf
 from typing import List
 from langchain.document_loaders import TextLoader
 from langchain.vectorstores import FAISS
@@ -9,6 +9,14 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from typing import List
 from dataclasses import dataclass
+import requests
+import string
+import io
+from googlesearch import search
+from bs4 import BeautifulSoup
+import pandas as pd
+import matplotlib.pyplot as plt
+import csv
 
 @dataclass
 class Question:
@@ -19,7 +27,6 @@ class Question:
 
 db_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db'
 
-# Convert pdf file to txt file for easier processing
 def pdf_to_txt(pdf):
     pdf_filename = pdf.name  
     txt_filename = pdf_filename + '.txt'
@@ -67,3 +74,95 @@ def prompt(topics, num):
         f"The exam should be about {topics}. Only generate the questions and "
         f"answers, not the exam itself."
     )
+
+# Convert prompt result to pdf
+def convert_to_pdf(question_list):
+    pdf = fpdf.FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    for index, question in enumerate(question_list, start=1):
+        pdf.multi_cell(0, 10, f"{index}. {question}", align="L")
+        pdf.ln(5)
+    pdf_bytes = pdf.output(dest='S')
+    return pdf_bytes
+
+def thisQuery(query):
+    fallback = ""
+    result = ''
+    try:
+        search_result_list = list(search(query))
+        page = requests.get(search_result_list[0])
+        soup = BeautifulSoup(page.content, features="lxml")
+        article_text = ''
+        article = soup.findAll('p')
+        for element in article:
+            article_text += '\n' + ''.join(element.findAll(text = True))
+        article_text = article_text.replace('\n', '')
+        first_sentence = article_text.split('.')
+        first_sentence = first_sentence[0].split('?')[0]
+        chars_without_whitespace = first_sentence.translate(
+            { ord(c): None for c in string.whitespace }
+        )
+        if len(chars_without_whitespace) > 0:
+            result = first_sentence
+        else:
+            result = fallback
+        return result
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def searchWeb(file):
+    df = pd.read_csv(file)
+    category_cols = [col for col in df.columns if df[col].dtype == 'object']
+    category_info = {}
+    for col in category_cols:
+        results = thisQuery(f'{col} finance')
+        if results:
+            category_info[col] = results
+    return category_info
+
+def makeLineGraph(file):
+    df = pd.read_csv(file)
+    category_cols = [col for col in df.columns if df[col].dtype == 'object']
+    df_categories = df[category_cols].astype(str)
+    plt.figure(figsize=(10,6))
+    for col in df_categories.columns:
+        plt.plot(df_categories[col], label=col)
+    plt.legend()
+    plt.title('Category Line Graph')
+    plt.xlabel('X-axis label')
+    plt.ylabel('Y-axis label')
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    return buffer.getvalue()
+
+def excel_to_txt(excel_file, db_path):
+    excel_filename = os.path.splitext(excel_file)[0]
+    txt_filename = excel_filename + '.txt'
+    excel_path = os.path.join(db_path, excel_file)
+    txt_path = os.path.join(db_path, txt_filename)
+    df = pd.read_excel(excel_path)
+    values = df.values.tolist()
+    text = '\n'.join([str(row) for row in values])
+    with open(txt_path, 'w') as f:
+        f.write(text)
+    loader = TextLoader(txt_path)
+    documents = loader.load()
+    return documents
+
+def csv_to_txt(csv_file, db_path):
+    csv_filename = os.path.splitext(csv_file.name)[0]
+    txt_filename = csv_filename + '.txt'
+    csv_path = os.path.join(db_path, csv_file.name)
+    txt_path = os.path.join(db_path, txt_filename) 
+    with open(csv_path, 'wb') as f:
+        f.write(csv_file.read())
+    with open(csv_path, newline='') as csvfile:
+        csvreader = csv.reader(csvfile)
+        with open(txt_path, 'w') as txtfile:
+            for row in csvreader:
+                txtfile.write('\t'.join(row) + '\n')
+    loader = TextLoader(txt_path)
+    documents = loader.load()
+    return documents
