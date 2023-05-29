@@ -38,3 +38,8 @@ Say goodbye to superficial skimming and embrace a comprehensive understanding wi
 cd SmartyPants/
 streamlit run main.py
 ```
+
+## Links 
+[Documentaion](https://docs.google.com/document/d/1BpWFbU_dEe6JBWpLWjTV2KUtWcriIIB3pA29bB3c_v4/edit?usp=sharing)
+[Youtube Demo](https://youtu.be/UoAEQGzfz5s) 
+[DevPost](https://devpost.com/software/smartypants-3otuxb)
