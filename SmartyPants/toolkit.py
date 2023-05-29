@@ -25,12 +25,12 @@ class Question:
     options: List[str]
     answer: int
 
-db_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db'
+db_path = 'your/path/to/db'
 
 def pdf_to_txt(pdf):
     pdf_filename = pdf.name  
     txt_filename = pdf_filename + '.txt'
-    txt_path = '/Users/leeyilin/LifeHack-2023/SmartyPants/db/' + txt_filename
+    txt_path = db_path + txt_filename
     with open(os.path.join(db_path, pdf_filename), 'wb') as pdf_file:
         pdf_file.write(pdf.read())
     with open(os.path.join(db_path, pdf_filename), 'rb') as pdf_file:
