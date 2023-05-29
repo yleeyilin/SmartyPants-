@@ -17,14 +17,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import csv
 
+db_path = 'your/path/to/db'
+
 @dataclass
 class Question:
     num: int
     question: str
     options: List[str]
     answer: int
-
-db_path = 'your/path/to/db'
 
 def pdf_to_txt(pdf):
     pdf_filename = pdf.name  
