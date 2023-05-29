@@ -6,3 +6,9 @@ Packages:
 - OpenAI
 - networkx 
 - matplotlib
+- BeautifulSoup
+- csv
+- pandas
+- io
+- pdfkit
+- fpdf
