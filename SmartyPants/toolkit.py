@@ -7,7 +7,6 @@ from langchain.document_loaders import TextLoader
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
-from typing import List
 from dataclasses import dataclass
 import requests
 import string
