@@ -20,7 +20,7 @@ Not only that, SmartyPants equips you with automatically generated mind maps, sh
 Say goodbye to superficial skimming and embrace a comprehensive understanding with our cutting-edge solution. 
 
 ## How to use 
-### 1. Download all packages needed. 
+### 1. Download all packages needed
 - Refer to `References.txt`
 ### 2. Download code to local desktop / computer 
 ### 3. Open the code on VSCode or any code editor 
@@ -33,7 +33,7 @@ Say goodbye to superficial skimming and embrace a comprehensive understanding wi
 ### 6. Substitute with your own API token 
 - Go to `apikey.py` and substitute your API Token 
 ### 7. Launch the app
-- In terminal, 
+- In terminal, run
 ```
 cd SmartyPants/
 streamlit run main.py
